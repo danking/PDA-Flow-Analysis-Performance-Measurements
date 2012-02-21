@@ -14,7 +14,7 @@
          LESS_OP GREATER_OP CARROT PIPE QMARK COLON EQUAL_SIGN SEMICOLON *EOF*)
  (START s1)
  (EOS *EOF*)
- (RULE r1 *start (_ _) #f)
+; (RULE r1 *start (_ _) #f)
  (RULE r2 primary_expression (IDENTIFIER) 0)
  (RULE r3 primary_expression (CONSTANT) 0)
  (RULE r4 primary_expression (STRING_LITERAL) 0)
