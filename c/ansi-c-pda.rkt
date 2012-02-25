@@ -1,6 +1,6 @@
 #lang racket
 
-(require "../pda-to-pda-risc/macro-glue.rkt")
+(require "../../pda-to-pda-risc/macro-glue.rkt")
 
 (provide (all-defined-out))
 
