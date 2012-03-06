@@ -1050,6 +1050,7 @@
      (struct:label-polynym s347 eos)
      (struct:label-polynym s348 eos)
      (struct:label-polynym s349 eos)
+     (struct:label-polynym r1 have-token)
      (struct:label-polynym r2 have-token)
      (struct:label-polynym r3 have-token)
      (struct:label-polynym r4 have-token)
@@ -1261,6 +1262,7 @@
      (struct:label-polynym r210 have-token)
      (struct:label-polynym r211 have-token)
      (struct:label-polynym r212 have-token)
+     (struct:label-polynym r1 eos)
      (struct:label-polynym r2 eos)
      (struct:label-polynym r3 eos)
      (struct:label-polynym r4 eos)
@@ -2943,6 +2945,8 @@
      #f
      #f
      #f
+     #f
+     #f
      #f)
     (#f
      #f
@@ -4415,8 +4419,12 @@
      #f
      #f
      #f
+     #f
+     #f
      #f)
     (()
+     ()
+     ()
      ()
      ()
      ()
@@ -17808,7 +17816,7 @@
      ((struct:block*
        ((struct:push (struct:state s53))
         (struct:go (struct:label-polynym r28 eos) ()))))
-v     ((struct:block* ((struct:push (struct:state s54)) (struct:reject))))
+     ((struct:block* ((struct:push (struct:state s54)) (struct:reject))))
      ((struct:block*
        ((struct:push (struct:state s55))
         (struct:go (struct:label-polynym r30 eos) ()))))
@@ -18368,6 +18376,20 @@ v     ((struct:block* ((struct:push (struct:state s54)) (struct:reject))))
      ((struct:block*
        ((struct:push (struct:state s349))
         (struct:go (struct:label-polynym r209 eos) ()))))
+     ((struct:block*
+       ((struct:assign (struct:nameless-reg) (struct:pop))
+        (struct:assign (struct:named-reg _) (struct:pop))
+        (struct:assign (struct:nameless-reg) (struct:pop))
+        (struct:assign (struct:named-reg _) (struct:pop))
+        (struct:assign (struct:named-reg target) (struct:pop))
+        (struct:sem-act
+         r1
+         ((struct:named-reg _) (struct:named-reg _))
+         ((struct:named-reg ret-val))
+         #f)
+        (struct:push (struct:named-reg target))
+        (struct:push (struct:named-reg ret-val))
+        (struct:state-case (struct:named-reg target) () ()))))
      ((struct:block*
        ((struct:assign (struct:nameless-reg) (struct:pop))
         (struct:assign (struct:named-reg IDENTIFIER) (struct:pop))
@@ -31361,6 +31383,20 @@ v     ((struct:block* ((struct:push (struct:state s54)) (struct:reject))))
           ((struct:go (struct:label-polynym s14 have-token) ())))))))
      ((struct:block*
        ((struct:assign (struct:nameless-reg) (struct:pop))
+        (struct:assign (struct:named-reg _) (struct:pop))
+        (struct:assign (struct:nameless-reg) (struct:pop))
+        (struct:assign (struct:named-reg _) (struct:pop))
+        (struct:assign (struct:named-reg target) (struct:pop))
+        (struct:sem-act
+         r1
+         ((struct:named-reg _) (struct:named-reg _))
+         ((struct:named-reg ret-val))
+         #f)
+        (struct:push (struct:named-reg target))
+        (struct:push (struct:named-reg ret-val))
+        (struct:state-case (struct:named-reg target) () ()))))
+     ((struct:block*
+       ((struct:assign (struct:nameless-reg) (struct:pop))
         (struct:assign (struct:named-reg IDENTIFIER) (struct:pop))
         (struct:assign (struct:named-reg target) (struct:pop))
         (struct:sem-act
@@ -44350,4 +44386,4 @@ v     ((struct:block* ((struct:push (struct:state s54)) (struct:reject))))
          ((struct:state s0) (struct:state s12))
          (((struct:go (struct:label-polynym s14 eos) ()))
           ((struct:go (struct:label-polynym s14 eos) ()))))))))
-    ((struct:go (struct:label-polynym s1 unknown) ())))))
+    ((struct:go (struct:label-polynym s0 unknown) ())))))
