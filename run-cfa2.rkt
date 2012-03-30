@@ -25,8 +25,9 @@
 
   ;; Min Headroom
   (define (min-headroom node-graph)
-    ;; a RegisterEnv is a [Hash Symbol [SetOf Value]]
-    ;; an AStack is a Symbol
+    ;; an AValue is a [SetOf Value]
+    ;; a RegisterEnv is a [Hash Symbol AValue]
+    ;; an AStack is an AValue
     ;; an AState is a (make-abstract-state Key RegisterEnv AStack)
     (define-struct abstract-state (node re st) #:transparent)
     ;; a FlowValue is [U PositiveInteger +Infinity]
@@ -96,17 +97,24 @@
     (define (pop-state? flow-state)
       (pop-node?/uid (abstract-state-node (flow-state-astate flow-state))))
 
-    ;; astate-similar? : FlowState FlowState -> Boolean
+    ;; astate-similar? : AState AState -> Boolean
     (define astate-similar? (match-lambda*
                              [(list (abstract-state node1 re1 st1)
                                     (abstract-state node2 re2 st2))
                               (and (equal? node1 node2)
                                    (equal? st1 st2))]))
+    ;; astate-hash-code : AState -> Number
+    (define astate-hash-code (match-lambda
+                              [(abstract-state node re st) (+ (equal-hash-code node)
+                                                              (equal-hash-code st))]))
     ;; flow-state-similar? : FlowState FlowState -> Boolean
     (define flow-state-similar? (match-lambda*
                                  [(list (flow-state s1 _)
                                         (flow-state s2 _))
                                   (astate-similar? s1 s2)]))
+    ;; state-hash-code : FlowState -> Number
+    (define state-hash-code (match-lambda
+                             [(flow-state as _) (astate-hash-code as)]))
     ;; state-equal? : FlowState FlowState -> Boolean
     (define state-equal? equal?)
 
@@ -209,7 +217,7 @@
                                               (hash)
                                               'ε)
                               5)
-                  push-state? pop-state? state-equal?
+                  push-state? pop-state? state-equal? state-hash-code
                   flow-state-join flow-state-gte flow-state-similar?
                   succ-states/flow pop-succ-states/flow))
 
