@@ -37,13 +37,14 @@
     (define-struct sem-act-val (name) #:transparent)
 
 
-    ;; env-update : RegisterEnv RegisterName Value -> RegisterEnv
+    ;; env-update : RegisterEnv RegisterName [U Value [SetOf Value]] -> RegisterEnv
     (define (env-update env reg val)
-      (match reg
-        ((named-reg name)
-         (hash-set env (syntax-e name) (set val)))
-        ((nameless-reg)
-         (hash-set env 'nameless-reg (set val)))))
+      (let ((val (if (set? val) val (set val))))
+        (match reg
+          ((named-reg name)
+           (hash-set env (syntax-e name) val))
+          ((nameless-reg)
+           (hash-set env 'nameless-reg val)))))
 
     ;; env-ref : RegisterEnv RegisterName -> [SetOf Value]
     (define (env-ref env reg)
