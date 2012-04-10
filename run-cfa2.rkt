@@ -23,21 +23,21 @@
                       "building node-graph"
                       (build-node-graph pda-risc)))
 
+  ;; an AValue is a [SetOf Value]
+  ;; a RegisterEnv is a [Hash Symbol AValue]
+  ;; an AStack is an AValue
+  ;; an AState is a (make-abstract-state Key RegisterEnv AStack)
+  (define-struct abstract-state (node re st) #:transparent)
+  ;; a FlowValue is [U PositiveInteger +Infinity]
+  ;; a FlowState is a (make-flow-state AState FlowValue)
+  (define-struct flow-state (astate flow) #:transparent)
+
+  ;; A SemActVal is how we represent the result of a sem-act
+  (define-struct sem-act-val (name) #:transparent)
+
+
   ;; Min Headroom
   (define (min-headroom node-graph)
-    ;; an AValue is a [SetOf Value]
-    ;; a RegisterEnv is a [Hash Symbol AValue]
-    ;; an AStack is an AValue
-    ;; an AState is a (make-abstract-state Key RegisterEnv AStack)
-    (define-struct abstract-state (node re st) #:transparent)
-    ;; a FlowValue is [U PositiveInteger +Infinity]
-    ;; a FlowState is a (make-flow-state AState FlowValue)
-    (define-struct flow-state (astate flow) #:transparent)
-
-    ;; A SemActVal is how we represent the result of a sem-act
-    (define-struct sem-act-val (name) #:transparent)
-
-
     ;; env-update : RegisterEnv RegisterName [U Value [SetOf Value]] -> RegisterEnv
     (define (env-update env reg val)
       (let ((val (if (set? val) val (set val))))
