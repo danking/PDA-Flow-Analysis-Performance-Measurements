@@ -2,6 +2,8 @@
 (require "../cfa2/cfa2.rkt"
          "../pda-to-pda-risc/pdarisc-node-graph.rkt"
          "../pda-to-pda-risc/node-graph.rkt"
+         (only-in "../cfa2/utilities.rkt" bpset->fv-hash)
+         (only-in "../racket-utils/similar-sets.rkt" get-basic-set)
          (rename-in "../pda-to-pda-risc/pdarisc-data.rkt"
                     (assign assign-node)
                     (assign? assign-node?)
@@ -221,6 +223,10 @@
                   flow-state-join flow-state-gte flow-state-similar? state-hash-code
                   succ-states/flow pop-succ-states/flow))
 
-  (time/named
-   "cfa2 min-headroom analysis"
-   (CFA2 (min-headroom node-graph) #:debug debug)))
+  (list (bpset->fv-hash (get-basic-set (time/named
+                                        "cfa2 min-headroom analysis"
+                                        (CFA2 (min-headroom node-graph) #:debug debug)))
+                        (match-lambda [(flow-state as fv) (values as fv)])
+                        min
+                        +inf.0)
+        node-graph))
