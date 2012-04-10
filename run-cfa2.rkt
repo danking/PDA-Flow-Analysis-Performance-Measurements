@@ -217,8 +217,8 @@
                                               (hash)
                                               'ε)
                               5)
-                  push-state? pop-state? state-equal? state-hash-code
-                  flow-state-join flow-state-gte flow-state-similar?
+                  push-state? pop-state? state-equal?
+                  flow-state-join flow-state-gte flow-state-similar? state-hash-code
                   succ-states/flow pop-succ-states/flow))
 
   (time/named
