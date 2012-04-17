@@ -27,6 +27,7 @@
 
   ;; an AValue is a [SetOf Value]
   ;; a RegisterEnv is a [Hash Symbol AValue]
+  (define empty-register-env (hash))
   ;; an AStack is an AValue
   ;; an AState is a (make-abstract-state Key RegisterEnv AStack)
   (define-struct abstract-state (node re st) #:transparent)
@@ -138,6 +139,17 @@
                                                      (first retvars)
                                                      (sem-act-val name))
                                       astack)]
+                     [(go target args)
+                      (match-let (((join-node params) (uid->node s~)))
+                        (abstract-state s~
+                                        (for/fold ([new-env empty-register-env])
+                                                  ([parameter params]
+                                                   [argument args])
+                                          (env-update new-env
+                                                      parameter
+                                                      (eval-pure-rhs argument
+                                                                     env)))
+                                        astack))]
                      [_ (abstract-state s~ env astack)])))]))
 
     ;; pop-succ-states : AState AState -> [SetOf AState]
@@ -216,7 +228,7 @@
                (flow-state astate~ (max push-fv (next-flow pop-fstate)))))
 
     (FlowAnalysis (flow-state (abstract-state (node-graph-source node-graph)
-                                              (hash)
+                                              empty-register-env
                                               'ε)
                               5)
                   push-state? pop-state? state-equal?
