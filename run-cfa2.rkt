@@ -87,12 +87,20 @@
     (define astate-similar? (match-lambda*
                              [(list (abstract-state term1 re1 st1)
                                     (abstract-state term2 re2 st2))
-                              (and (equal? term1 term2)
+                              (and (eq? term1 term2)
                                    (equal? st1 st2))]))
     ;; astate-hash-code : AState -> Number
     (define astate-hash-code (match-lambda
-                              [(abstract-state term re st) (+ (equal-hash-code term)
-                                                              (equal-hash-code st))]))
+                              [(abstract-state term re st)
+                               (+ (equal-hash-code term)
+                                  (equal-hash-code st))]))
+    ;; astate-equal? : AState AState -> Boolean
+    (define astate-equal? (match-lambda*
+                            [(list (abstract-state term1 re1 st1)
+                                   (abstract-state term2 re2 st2))
+                             (and (eq? term1 term2)
+                                  (equal? re1 re2)
+                                  (equal? st1 st2))]))
     ;; flow-state-similar? : FlowState FlowState -> Boolean
     (define flow-state-similar? (match-lambda*
                                  [(list (flow-state s1 _)
@@ -102,13 +110,16 @@
     (define state-hash-code (match-lambda
                              [(flow-state as _) (astate-hash-code as)]))
     ;; state-equal? : FlowState FlowState -> Boolean
-    (define state-equal? equal?)
+    (define state-equal? (match-lambda*
+                           [(list (flow-state s1 _)
+                                  (flow-state s2 _))
+                            (astate-equal? s1 s2)]))
 
     ;; succ-states : AState -> [SetOf AState]
     (define succ-states
       (match-lambda
        [(abstract-state term env astack)
-        (for/set ([s~ (in-set (term-succs term))])
+        (for/seteq ([s~ (in-set (term-succs term))])
           (match (term->node term)
             [(push-node pure-rhs)
              (abstract-state s~ env (eval-pure-rhs pure-rhs env))]
@@ -142,10 +153,10 @@
                     pop)
 
       (let ((reg (pop-node-reg (term->node pop-term))))
-        (for/set ([term (in-set (term-succs pop-term))])
-                 (abstract-state term
-                                 (env-update env reg stack-after-push)
-                                 stack-before-push))))
+        (for/seteq ([term (in-set (term-succs pop-term))])
+                   (abstract-state term
+                                   (env-update env reg stack-after-push)
+                                   stack-before-push))))
 
     ;; register-env-join : RegisterEnv RegisterEnv -> RegisterEnv
     (define (register-env-join re1 re2)
@@ -198,16 +209,20 @@
     (define (succ-states/flow fstate)
       (match-define (flow-state astate fv) fstate)
 
-      (for/set ([astate~ (in-set (succ-states astate))])
-               (flow-state astate~ (next-flow fstate))))
+      (for/seteq ([astate~ (in-set (succ-states astate))]
+                  [i (set-count (succ-states astate))])
+                 (when (> debug 0)
+                   (printf "[succ-state/flow] ~a\n" i)
+                   (flush-output))
+                 (flow-state astate~ (next-flow fstate))))
 
     ;; pop-succ-states/flow : FlowState FlowState -> [SetOf FlowState]
     (define (pop-succ-states/flow push-fstate pop-fstate)
       (match-define (flow-state push-astate push-fv) push-fstate)
       (match-define (flow-state pop-astate _) pop-fstate)
 
-      (for/set ([astate~ (in-set (pop-succ-states push-astate pop-astate))])
-               (flow-state astate~ (max push-fv (next-flow pop-fstate)))))
+      (for/seteq ([astate~ (in-set (pop-succ-states push-astate pop-astate))])
+                 (flow-state astate~ (max push-fv (next-flow pop-fstate)))))
 
     (FlowAnalysis (flow-state (abstract-state (pda-risc-enh-initial-term pda-risc-enh)
                                               empty-register-env
