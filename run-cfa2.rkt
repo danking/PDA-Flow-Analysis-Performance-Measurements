@@ -53,7 +53,7 @@
         ((register name uid _ _)
          (hash-ref env
                    uid
-                   (lambda () (begin (printf "the register, ~a, is not bound yet in ~a. Returning 'bottom.\n" (syntax-e name) env)
+                   (lambda () (begin (printf "the register, ~a (uid: ~a), is not bound yet in ~a. Returning 'bottom.\n" name uid env)
                                      'bottom))))))
 
     ;; eval-pure-rhs : pure-rhs RegisterEnv -> [SetOf Value]
