@@ -52,7 +52,7 @@
     (define astate-similar? (match-lambda*
                              [(list (abstract-state term1 in1 st1 tr1 re1 le1)
                                     (abstract-state term2 in2 st2 tr2 re2 le2))
-                              (and (eq? term1 term2)
+                              (and (equal? term1 term2)
                                    (equal? st1 st2))]))
     ;; astate-hash-code : AState -> Number
     (define astate-hash-code (match-lambda
@@ -63,7 +63,7 @@
     (define astate-equal? (match-lambda*
                             [(list (abstract-state term1 in1 st1 tr1 re1 le1)
                                    (abstract-state term2 in2 st2 tr2 re2 le2))
-                             (and (eq? term1 term2)
+                             (and (equal? term1 term2)
                                   (equal? re1 re2)
                                   (equal? st1 st2))]))
     ;; flow-state-similar? : FlowState FlowState -> Boolean
@@ -106,13 +106,6 @@
                         le)]
        [(list (and a1 (abstract-state t1 in1 st1 tr1 re1 le1))
               (and a2 (abstract-state t2 in2 st2 tr2 re2 le2)))
-        (printf "~v ~v ~v ~v ~v ~v"
-                (equal? t1 t2)
-                (equal? in1 in2)
-                (equal? st1 st2)
-                (equal? tr1 tr2)
-                (equal? re1 re2)
-                (equal? le1 le2))
         (error 'astate-join
                (string-append "States must have matching nodes, stacks, "
                               "and label environment. Given ~v and ~v.")
