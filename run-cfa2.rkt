@@ -3,6 +3,7 @@
          "../semantics/abstract.rkt"
          (only-in "../cfa2/utilities.rkt" bpset->fv-hash)
          (only-in "../racket-utils/similar-sets.rkt" get-basic-set)
+         "../pda-to-pda-risc/risc-enhanced/decorate.rkt"
          (rename-in "../pda-to-pda-risc/risc-enhanced/data.rkt"
                     (assign assign-node)
                     (assign? assign-node?)
@@ -19,9 +20,10 @@
      (begin (displayln name)
             (time expr)))))
 
-(define (run-cfa2 pda-risc-enh
+(define (run-cfa2 pda-risc
                   #:debug [debug 0]
                   #:max-stack-height [max-stack-height +inf.0])
+  (define pda-risc-enh (decorate pda-risc))
   ;; a FlowValue is [U PositiveInteger +Infinity]
   ;; a FlowState is a (make-flow-state AState FlowValue)
   (define-struct flow-state (astate flow) #:transparent)

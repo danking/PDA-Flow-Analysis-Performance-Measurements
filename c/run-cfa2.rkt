@@ -5,4 +5,4 @@
 
 (file-stream-buffer-mode (current-output-port) 'none)
 
-(run-cfa2 ansi-c-pda-risc #:debug 0)
+(pretty-print (run-cfa2 ansi-c-pda-risc))
