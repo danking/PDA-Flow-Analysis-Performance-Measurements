@@ -118,7 +118,7 @@
        [(list (abstract-state t in st tr1 re1 le)
               (abstract-state t in st tr2 re2 le))
         (and (equal? re1 (register-env-join re1 re2))
-             (equal? re1 (set-union tr1 tr2)))]
+             (equal? tr1 (set-union tr1 tr2)))]
        [(list (abstract-state _ _ _ _ _ _)
               (abstract-state _ _ _ _ _ _))
         #f]))
