@@ -1,3 +1,7 @@
+All timings taken without errortrace, with jobs kicked off in emacs as "M-x
+compile RET racket run-cfa2.rkt RET". Nothing is compiled. No pretty
+printing. Run from my home machine.
+
 ## Paren Matching
 
 building node-graph
