@@ -33,13 +33,13 @@
     ;; pop-node? : Node -> Boolean
     (define (pop-node? node)
       (match (pda-term-insn node)
-        ((assign-node reg var-rhs)
+        ((assign-node _ reg var-rhs)
          (pop-var-rhs? var-rhs))
         (_ #f)))
     ;; pop-node-reg : Node -> RegName
     (define (pop-node-reg pop)
       (match (pda-term-insn pop)
-        ((assign-node reg var-rhs)
+        ((assign-node _ reg var-rhs)
          reg)
         (_ (error 'pop-node-reg "wasn't given a 'pop' node (an assign node)"))))
 
