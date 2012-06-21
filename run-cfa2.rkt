@@ -164,10 +164,13 @@
                   flow-state-join flow-state-gte flow-state-similar? state-hash-code
                   succ-states/flow pop-succ-states/flow))
 
-  (list (bpset->fv-hash (get-basic-set (time/named
-                                        "cfa2 min-headroom analysis"
-                                        (CFA2 (min-headroom) #:debug debug)))
-                        (match-lambda [(flow-state as fv) (values as fv)])
-                        min
-                        +inf.0)
-        (unparse pda-risc-enh)))
+  (let-values (((Paths Summaries Callers) (time/named
+                                           "cfa2 min-headroom analysis"
+                                           (CFA2 (min-headroom) #:debug debug))))
+    (list (bpset->fv-hash (get-basic-set Paths)
+                          (match-lambda [(flow-state as fv) (values as fv)])
+                          min
+                          +inf.0)
+          Summaries
+          Callers
+          (unparse pda-risc-enh))))
