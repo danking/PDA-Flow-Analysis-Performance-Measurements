@@ -1,0 +1,46 @@
+## Paren Matching
+
+building node-graph
+cpu time: 4 real time: 3 gc time: 0
+cfa2 min-headroom analysis
+cpu time: 24 real time: 25 gc time: 0
+
+
+## Polish Notation Plus Only
+
+building node-graph
+cpu time: 4 real time: 3 gc time: 0
+cfa2 min-headroom analysis
+cpu time: 104 real time: 103 gc time: 0
+
+
+## Polish Notation Plus Minus
+
+building node-graph
+cpu time: 4 real time: 3 gc time: 0
+cfa2 min-headroom analysis
+cpu time: 68 real time: 70 gc time: 0
+
+
+## Infix Notation Plus Only
+
+building node-graph
+cpu time: 4 real time: 5 gc time: 0
+cfa2 min-headroom analysis
+cpu time: 364 real time: 372 gc time: 32
+
+
+## Infix Notation Full
+
+building node-graph
+cpu time: 4 real time: 5 gc time: 0
+cfa2 min-headroom analysis
+cpu time: 25325 real time: 25727 gc time: 5920
+
+
+## Line Calculator (example from DrP)
+
+building node-graph
+cpu time: 4 real time: 6 gc time: 0
+cfa2 min-headroom analysis
+cpu time: 20681 real time: 20997 gc time: 3841
