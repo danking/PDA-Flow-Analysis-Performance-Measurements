@@ -5,10 +5,10 @@
          (only-in "../racket-utils/similar-sets.rkt" get-basic-set)
          "../pda-to-pda-risc/risc-enhanced/decorate.rkt"
          (rename-in "../pda-to-pda-risc/risc-enhanced/data.rkt"
-                    (assign assign-node)
-                    (assign? assign-node?)
-                    (push push-node)
-                    (push? push-node?)
+                    (assign assign-insn)
+                    (assign? assign-insn?)
+                    (push push-insn)
+                    (push? push-insn?)
                     (pop pop-var-rhs)
                     (pop? pop-var-rhs?)))
 
@@ -33,19 +33,21 @@
     ;; pop-node? : Node -> Boolean
     (define (pop-node? node)
       (match (pda-term-insn node)
-        ((assign-node _ reg var-rhs)
+        ((assign-insn _ reg var-rhs)
          (pop-var-rhs? var-rhs))
         (_ #f)))
     ;; pop-node-reg : Node -> RegName
     (define (pop-node-reg pop)
       (match (pda-term-insn pop)
-        ((assign-node _ reg var-rhs)
+        ((assign-insn _ reg var-rhs)
          reg)
-        (_ (error 'pop-node-reg "wasn't given a 'pop' node (an assign node)"))))
+        (_ (error 'pop-node-reg "wasn't given a 'pop' node (an assign insn)"))))
 
     ;; push-state? : FlowState -> Boolean
     (define (push-state? flow-state)
-      (push-node? (abstract-state-node (flow-state-astate flow-state))))
+      (push-insn? (pda-term-insn
+                   (abstract-state-node
+                    (flow-state-astate flow-state)))))
     ;; pop-state? : FlowState -> Boolean
     (define (pop-state? flow-state)
       (pop-node? (abstract-state-node (flow-state-astate flow-state))))
