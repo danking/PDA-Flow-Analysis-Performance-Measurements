@@ -1,7 +1,9 @@
 #lang racket
 (require "../cfa2/cfa2.rkt"
          "../semantics/abstract.rkt"
-         (only-in "../cfa2/utilities.rkt" bpset->fv-hash)
+         (only-in "../cfa2/utilities.rkt"
+                  bpset->fv-hash
+                  fstate-bp-set->term-bp-set)
          (only-in "../racket-utils/similar-sets.rkt" get-basic-set)
          "../pda-to-pda-risc/risc-enhanced/decorate.rkt"
          (rename-in "../pda-to-pda-risc/risc-enhanced/data.rkt"
