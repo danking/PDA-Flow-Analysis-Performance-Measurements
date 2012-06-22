@@ -2,8 +2,7 @@
 (require "../cfa2/cfa2.rkt"
          "../semantics/abstract.rkt"
          (only-in "../cfa2/utilities.rkt"
-                  bpset->fv-hash
-                  fstate-bp-set->term-bp-set)
+                  bpset->fv-hash)
          (only-in "../racket-utils/similar-sets.rkt" get-basic-set)
          "../pda-to-pda-risc/risc-enhanced/decorate.rkt"
          (rename-in "../pda-to-pda-risc/risc-enhanced/data.rkt"
@@ -169,20 +168,21 @@
                                            "cfa2 min-headroom analysis"
                                            (CFA2 (min-headroom) #:debug debug))))
     (list (bpset->fv-hash (get-basic-set Paths)
-                          fstate->node
+                          (match-lambda [(flow-state (abstract-state node _ _ _ _ _) fv)
+                                         (values node fv)])
                           min
                           +inf.0)
-          (fstate-bp-set->term-bp-set Summaries fstate-bp->node-bp)
-          (fstate-bp-set->term-bp-set Callers fstate-bp->node-bp)
+          (fstate-bp-set->term-bp-set Summaries)
+          (fstate-bp-set->term-bp-set Callers)
           pda-risc-enh)))
 
 ;; a FlowValue is [U PositiveInteger +Infinity]
 ;; a FlowState is a (make-flow-state AState FlowValue)
 (define-struct flow-state (astate flow) #:transparent)
 
-(define fstate-bp->node-bp
-  (match-lambda [(BP fs1 fs2)
-                 (BP (fstate->node fs1) (fstate->node fs2))]))
-(define fstate->node
-  (match-lambda [(flow-state (abstract-state node _ _ _ _ _) fv)
-                 (values node fv)]))
+(define (fstate-bp-set->term-bp-set bpset)
+  (for/set ((bp bpset))
+    (match-define (BP (flow-state (abstract-state node1 _ _ _ _ _) _)
+                      (flow-state (abstract-state node2 _ _ _ _ _) _))
+                  bp)
+    (BP node1 node2)))
