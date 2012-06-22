@@ -170,9 +170,10 @@
                                            "cfa2 min-headroom analysis"
                                            (CFA2 (min-headroom) #:debug debug))))
     (list (bpset->fv-hash (get-basic-set Paths)
-                          (match-lambda [(flow-state as fv) (values as fv)])
+                          (match-lambda [(flow-state (abstract-state node _ _ _ _ _) fv)
+                                         (values node fv)])
                           min
                           +inf.0)
           Summaries
           Callers
-          (unparse pda-risc-enh))))
+          pda-risc-enh)))
