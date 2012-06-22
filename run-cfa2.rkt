@@ -26,9 +26,6 @@
                   #:debug [debug 0]
                   #:max-stack-height [max-stack-height +inf.0])
   (define pda-risc-enh (decorate pda-risc))
-  ;; a FlowValue is [U PositiveInteger +Infinity]
-  ;; a FlowState is a (make-flow-state AState FlowValue)
-  (define-struct flow-state (astate flow) #:transparent)
 
   ;; Min Headroom
   (define (min-headroom)
@@ -178,6 +175,10 @@
           (fstate-bp-set->term-bp-set Summaries fstate-bp->node-bp)
           (fstate-bp-set->term-bp-set Callers fstate-bp->node-bp)
           pda-risc-enh)))
+
+;; a FlowValue is [U PositiveInteger +Infinity]
+;; a FlowState is a (make-flow-state AState FlowValue)
+(define-struct flow-state (astate flow) #:transparent)
 
 (define fstate-bp->node-bp
   (match-lambda [(BP fs1 fs2)
