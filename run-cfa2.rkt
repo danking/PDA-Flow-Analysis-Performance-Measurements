@@ -1,6 +1,7 @@
 #lang racket
 (require "../cfa2/cfa2.rkt"
          "../semantics/abstract.rkt"
+         "../semantics/flow.rkt"
          (only-in "../cfa2/utilities.rkt"
                   bpset->fv-hash)
          (only-in "../racket-utils/similar-sets.rkt" get-basic-set)
@@ -175,14 +176,3 @@
           (fstate-bp-set->term-bp-set Summaries)
           (fstate-bp-set->term-bp-set Callers)
           pda-risc-enh)))
-
-;; a FlowValue is [U PositiveInteger +Infinity]
-;; a FlowState is a (make-flow-state AState FlowValue)
-(define-struct flow-state (astate flow) #:transparent)
-
-(define (fstate-bp-set->term-bp-set bpset)
-  (for/set ((bp bpset))
-    (match-define (BP (flow-state (abstract-state node1 _ _ _ _ _) _)
-                      (flow-state (abstract-state node2 _ _ _ _ _) _))
-                  bp)
-    (BP node1 node2)))
