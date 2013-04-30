@@ -16,7 +16,7 @@
     (values node->fv Summaries Callers paren-pda-risc-enh)))
 
 (define (show)
-  (unparse paren-pda-risc-enh))
+  (unparse-pda paren-pda-risc-enh))
 
 
 (require "../../cfa2/utilities.rkt")
