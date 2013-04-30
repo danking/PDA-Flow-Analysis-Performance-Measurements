@@ -50,6 +50,11 @@
     ;; pop-state? : FlowState -> Boolean
     (define (pop-state? flow-state)
       (pop-node? (abstract-state-node (flow-state-astate flow-state))))
+    ;; stack-ensure-state? : FlowState -> Boolean
+    (define (stack-ensure-state? flow-state)
+      (stack-ensure? (pda-term-insn
+                      (abstract-state-node
+                       (flow-state-astate flow-state)))))
 
     ;; astate-similar? : AState AState -> Boolean
     (define astate-similar? (match-lambda*
@@ -142,6 +147,13 @@
 
       (cond [(push-state? fstate) (max (sub1 flow) 0)]
             [(pop-state? fstate)  (min (add1 flow) max-stack-height)]
+            [(stack-ensure-state? fstate)
+             (min (+ flow (stack-ensure-hdrm
+                           (pda-term-insn
+                            (abstract-state-node
+                             (flow-state-astate
+                              fstate)))))
+                  max-stack-height)]
             [else flow]))
 
     ;; succ-states/flow : FlowState -> [SetOf FlowState]
@@ -160,7 +172,7 @@
         (flow-state astate~ (max push-fv (next-flow pop-fstate)))))
 
     (FlowAnalysis (flow-state (init-astate (pda-risc-enh-initial-term pda-risc-enh))
-                              5)
+                              0)
                   push-state? pop-state? state-equal?
                   flow-state-join flow-state-gte flow-state-similar? state-hash-code
                   succ-states/flow pop-succ-states/flow))
