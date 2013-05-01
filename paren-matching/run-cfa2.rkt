@@ -4,7 +4,7 @@
 (require "../../pda-to-pda-risc/risc-enhanced/data.rkt")
 (require "../run-cfa2.rkt")
 
-(provide (all-defined-out))
+(provide (all-defined-out) get-uid pda-term-insn)
 
 (define-values (node->fv Summaries Callers paren-pda-risc-enh)
   (match-let (((list node->fv Summaries Callers paren-pda-risc-enh)
@@ -12,6 +12,7 @@
     (printf "Sizes: paths: ~a, summaries: ~a, callers: ~a\n"
             (hash-count node->fv)
             (set-count Summaries)
+
             (set-count Callers))
     (values node->fv Summaries Callers paren-pda-risc-enh)))
 
@@ -75,3 +76,31 @@
 
 (define push-pop-web/readable
   (make-readable-webset push-pop-web/uid))
+
+(require "../useless-stack-ensures.rkt")
+
+(define useless-ensures
+  (useless-stack-ensures (first (pdarisc-insns paren-pda-risc-enh))
+                         (lambda (uid)
+                           (hash-ref uid->fv uid 0))))
+
+(define paren-pda-risc/se
+  (pda-risc-enh->pda-risc paren-pda-risc-enh))
+
+(define (make-readable-list ls)
+  (for/list ((t ls))
+    (unparse t)))
+
+(require "../../pda-to-pda-risc/risc-enhanced/search.rkt")
+
+(define pushes/term
+  (folding-search (lambda (t pushes)
+                    (if (push? (pda-term-insn t))
+                        (cons t pushes)
+                        pushes))
+                  empty
+                  (first (pdarisc-insns paren-pda-risc-enh))))
+
+(define pushes/insn
+  (for/set ((t pushes/term))
+    (pda-term-insn t)))
