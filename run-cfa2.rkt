@@ -185,6 +185,6 @@
                                          (values node fv)])
                           min
                           +inf.0)
-          (fstate-bp-set->term-bp-set Summaries)
-          (fstate-bp-set->term-bp-set Callers)
+          (for/set ((s Summaries)) (strip-flow-BP-to-node-BP s))
+          (for/set ((s Callers)) (strip-flow-BP-to-node-BP s))
           pda-risc-enh)))
