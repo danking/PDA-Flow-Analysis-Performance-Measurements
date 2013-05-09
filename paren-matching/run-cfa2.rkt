@@ -1,106 +1,22 @@
 #lang racket
 
-(require "paren-pda.rkt")
-(require "../../pda-to-pda-risc/risc-enhanced/data.rkt")
-(require "../run-cfa2.rkt")
+(require "paren-pda.rkt"
+         "../run-cfa2.rkt"
+         "../../cfa2-results-analysis/standard-overview.rkt")
 
-(provide (all-defined-out) get-uid pda-term-insn)
+(provide (all-defined-out))
 
-(define-values (node->fv Summaries Callers paren-pda-risc-enh)
-  (match-let (((list node->fv Summaries Callers paren-pda-risc-enh)
-               (run-cfa2 paren-pda-risc)))
-    (printf "Sizes: paths: ~a, summaries: ~a, callers: ~a\n"
-            (hash-count node->fv)
-            (set-count Summaries)
-
-            (set-count Callers))
-    (values node->fv Summaries Callers paren-pda-risc-enh)))
-
-(define (show)
-  (unparse-pda paren-pda-risc-enh))
-
-(require "../../cfa2/utilities.rkt")
-
-(define (make-uid-hash fv-hash)
-  (define (get-uid i)
-    (cond [(insn? i) (insn-uid i)]
-          [(insn*? i) (insn*-uid i)]
-          [(join-point? i) (join-point-uid i)]))
-
-  (for/hash (((k v) (in-hash fv-hash)))
-    (values (get-uid (pda-term-insn k)) v)))
-
-(define uid->term/hash
-  (for/hash (((k _) (in-hash node->fv)))
-    (values (get-uid (pda-term-insn k)) k)))
-
-(define (uid->term uid)
-  (hash-ref uid->term/hash uid 'unreachable))
-
-(define uid->fv (make-uid-hash node->fv))
-
-
-(require "../../semantics/print-flow.rkt")
-
-(define pda-risc/fvs
-  (pda-risc->flow-annotated-sexp paren-pda-risc-enh
-                                 (lambda (uid)
-                                   (hash-ref uid->fv uid '⊥))))
-
-(require "../push-pop-webs.rkt"
-         "../../cfa2/cfa2.rkt"
-         (only-in "../../semantics/abstract.rkt" abstract-state-node)
-         (only-in "../../semantics/flow.rkt" flow-state-astate))
-
-(define (BP->pair-of-uid bp)
-  (match-let (((BP a b) bp))
-    (list (get-uid (pda-term-insn a))
-          (get-uid (pda-term-insn b)))))
-
-(define push-pop-web/uid
-  (webset-from-relation (set-map Summaries BP->pair-of-uid)))
-
-(define (uids->terms s)
-  (sequence-map uid->term s))
-
-(define (terms->unparsed-terms s)
-  (sequence-map unparse s))
-
-(define (sequence->set s)
-  (for/set ((e s)) e))
-
-(define (make-readable-webset webset)
-  (for/set ((w webset))
-    (web (sequence->set (terms->unparsed-terms (uids->terms (web-pushes w))))
-         (sequence->set (terms->unparsed-terms (uids->terms (web-pops w)))))))
-
-(define push-pop-web/readable
-  (make-readable-webset push-pop-web/uid))
-
-(require "../useless-stack-ensures.rkt")
-
-(define useless-ensures
-  (useless-stack-ensures (first (pdarisc-insns paren-pda-risc-enh))
-                         (lambda (uid)
-                           (hash-ref uid->fv uid 0))))
-
-(define paren-pda-risc/se
-  (pda-risc-enh->pda-risc paren-pda-risc-enh))
-
-(define (make-readable-list ls)
-  (for/list ((t ls))
-    (unparse t)))
-
-(require "../../pda-to-pda-risc/risc-enhanced/search.rkt")
-
-(define pushes/term
-  (folding-search (lambda (t pushes)
-                    (if (push? (pda-term-insn t))
-                        (cons t pushes)
-                        pushes))
-                  empty
-                  (first (pdarisc-insns paren-pda-risc-enh))))
-
-(define pushes/insn
-  (for/set ((t pushes/term))
-    (pda-term-insn t)))
+(define cfa2-results (run-cfa2 paren-pda-risc))
+(define summary (standard-overview cfa2-results))
+(match-define
+ (results-summary uid->fv/hash
+                  uid->term/hash
+                  ;; analysis results
+                  push-pop-web
+                  useless-ensures
+                  ;; modified pdarisc and specific terms
+                  pda-risc-enh/se
+                  pda-risc/se
+                  pushes
+                  pops)
+ summary)
