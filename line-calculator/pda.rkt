@@ -4,7 +4,7 @@
 
 (provide (all-defined-out))
 
-(define calculator-pda-risc
+(define pda-risc
   (pda->pda-risc
    (TOKENS NUM L-PAREN R-PAREN SEMICOLON TIMES DIVIDE PLUS MINUS *EOF*)
    (EOS *EOF*)

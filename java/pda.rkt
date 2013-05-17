@@ -4,7 +4,7 @@
 
 (provide (all-defined-out))
 
-(define java-pda-risc
+(define pda-risc
    (pda->pda-risc
     (TOKENS
      ABSTRACT

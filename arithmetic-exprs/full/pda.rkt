@@ -4,7 +4,7 @@
 
 (provide (all-defined-out))
 
-(define arithmetic-pda-risc
+(define pda-risc
   (pda->pda-risc
    (TOKENS NUM L-PAREN R-PAREN TIMES DIVIDE PLUS MINUS *EOF*)
    (EOS *EOF*)

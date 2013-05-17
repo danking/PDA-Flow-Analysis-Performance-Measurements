@@ -4,7 +4,7 @@
 
 (provide (all-defined-out))
 
-(define polish-notation-plus-pda-risc
+(define pda-risc
   (pda->pda-risc
    (TOKENS NUM PLUS *EOF*)
    (EOS *EOF*)

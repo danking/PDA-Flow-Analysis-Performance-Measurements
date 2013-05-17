@@ -4,7 +4,7 @@
 
 (provide (all-defined-out))
 
-(define paren-pda-risc
+(define pda-risc
   (pda->pda-risc
    (TOKENS L-PAREN TERM R-PAREN *EOF*)
    (EOS *EOF*)
