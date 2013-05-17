@@ -1,6 +1,6 @@
 #!/bin/zsh
 
 DATE=$(date '+%F-%s')
-racket new-test.rkt >& results/master-$DATE.log
+racket test-all-grammars.rkt >& results/master-$DATE.log
 COMMIT_HASH=$(git rev-parse --short --verify HEAD)
-git log --decorate=full 'HEAD^..HEAD' > commit-$COMMIT_HASH-$DATE
+git log --decorate 'HEAD^..HEAD' > commit-$COMMIT_HASH-$DATE
