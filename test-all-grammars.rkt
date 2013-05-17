@@ -24,19 +24,20 @@
       #`(begin (begin
                  (require (rename-in pda-file-path [pda-risc pda-risc-name]))
                  (let ()
-                  (define cfa2-results (run-cfa2 pda-risc-name))
-                  (define log-file
-                    (string-append "results/"
-                                   (string-replace path "/" "-")
-                                   "-"
-                                   (parameterize
-                                       ([date-display-format 'iso-8601])
-                                     (date->string (current-date)))
-                                   "-"
-                                   (current-seconds)
-                                   ".log"))
-                  (define summary (standard-overview cfa2-results log-file))
-                  (void)))
+                   (displayln (string-append "==== " path " ===="))
+                   (define cfa2-results (run-cfa2 pda-risc-name))
+                   (define log-file
+                     (string-append "results/"
+                                    (string-replace path "/" "-")
+                                    "-"
+                                    (parameterize
+                                        ([date-display-format 'iso-8601])
+                                      (date->string (current-date)))
+                                    "-"
+                                    (current-seconds)
+                                    ".log"))
+                   (define summary (standard-overview cfa2-results log-file))
+                   (void)))
                ...)))))
 
 (get-cfa2-statistics "java"
