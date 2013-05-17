@@ -34,7 +34,7 @@
                                         ([date-display-format 'iso-8601])
                                       (date->string (current-date)))
                                     "-"
-                                    (current-seconds)
+                                    (number->string (current-seconds))
                                     ".log"))
                    (define summary (standard-overview cfa2-results log-file))
                    (void)))
