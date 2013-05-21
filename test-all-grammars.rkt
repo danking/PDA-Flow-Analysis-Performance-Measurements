@@ -4,6 +4,11 @@
          (for-syntax racket/syntax)
          "run-cfa2.rkt"
          "../cfa2-results-analysis/standard-overview.rkt"
+         ;; new stuff
+         "../cfa2-analyses/min-headroom.rkt"
+         "../pda-to-pda-risc/risc-enhanced/decorate.rkt"
+         "../cfa2/cfa2.rkt"
+         "../cfa2-results-analysis/flow-results-to-term-results.rkt"
          ;; not currently used
          "../cfa2-results-analysis/make-dot-graph.rkt"
          "../cfa2-results-analysis/dot-graph-data.rkt"
@@ -25,7 +30,16 @@
                  (require (rename-in pda-file-path [pda-risc pda-risc-name]))
                  (let ()
                    (displayln (string-append "==== " path " ===="))
-                   (define cfa2-results (run-cfa2 pda-risc-name))
+                   ;; (define cfa2-results (run-cfa2 pda-risc-name))
+                   (define pda-risc-enhanced (decorate pda-risc-name))
+                   (define-values
+                     (Paths Summaries Callers) (time
+                                                (CFA2 (min-headroom-analysis
+                                                       pda-risc-enhanced))))
+                   (define results (flow-results->term-results Paths
+                                                               Summaries
+                                                               Callers
+                                                               min-headroom-lattice))
                    (define log-file
                      (string-append "results/"
                                     (string-replace path "/" "-")
@@ -36,7 +50,9 @@
                                     "-"
                                     (number->string (current-seconds))
                                     ".log"))
-                   (define summary (standard-overview cfa2-results log-file))
+                   (define summary (standard-overview results
+                                                      pda-risc-enhanced
+                                                      log-file))
                    (void)))
                ...)))))
 
@@ -48,4 +64,5 @@
                      "arithmetic-exprs/full"
                      "arithmetic-exprs/polish-notation/plus-only"
                      "arithmetic-exprs/polish-notation/plus-minus"
-                     "arithmetic-exprs/plus-only")
+                     "arithmetic-exprs/plus-only"
+                     )
