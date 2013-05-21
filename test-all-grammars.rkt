@@ -2,19 +2,11 @@
 
 (require racket/date
          (for-syntax racket/syntax)
-         "run-cfa2.rkt"
          "../cfa2-results-analysis/standard-overview.rkt"
-         ;; new stuff
          "../cfa2-analyses/min-headroom.rkt"
          "../pda-to-pda-risc/risc-enhanced/decorate.rkt"
          "../cfa2/cfa2.rkt"
-         "../cfa2-results-analysis/flow-results-to-term-results.rkt"
-         ;; not currently used
-         "../cfa2-results-analysis/make-dot-graph.rkt"
-         "../cfa2-results-analysis/dot-graph-data.rkt"
-         "../cfa2-results-analysis/annotate-dot-graph.rkt"
-         "../cfa2-results-analysis/reject-dead-code.rkt"
-         "../cfa2-results-analysis/missing-push-pops.rkt")
+         "../cfa2-results-analysis/flow-results-to-term-results.rkt")
 
 (define-syntax (get-cfa2-statistics stx)
   (syntax-case stx ()
@@ -30,7 +22,6 @@
                  (require (rename-in pda-file-path [pda-risc pda-risc-name]))
                  (let ()
                    (displayln (string-append "==== " path " ===="))
-                   ;; (define cfa2-results (run-cfa2 pda-risc-name))
                    (define pda-risc-enhanced (decorate pda-risc-name))
                    (define-values
                      (Paths Summaries Callers) (time
