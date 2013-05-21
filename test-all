@@ -3,4 +3,4 @@
 DATE=$(date '+%F-%s')
 racket test-all-grammars.rkt >& results/master-$DATE.log
 COMMIT_HASH=$(git rev-parse --short --verify HEAD)
-git log --decorate 'HEAD^..HEAD' > commit-$COMMIT_HASH-$DATE
+git log --decorate 'HEAD^..HEAD' > results/commit-$COMMIT_HASH-$DATE
