@@ -6,7 +6,8 @@
          "../cfa2-analyses/min-headroom.rkt"
          "../pda-to-pda-risc/risc-enhanced/decorate.rkt"
          "../cfa2/cfa2.rkt"
-         "../cfa2-results-analysis/flow-results-to-term-results.rkt")
+         "../cfa2-results-analysis/flow-results-to-term-results.rkt"
+         "../cfa2-results-analysis/reject-dead-code.rkt")
 
 (define-syntax (get-cfa2-statistics stx)
   (syntax-case stx ()
@@ -23,6 +24,7 @@
                  (let ()
                    (displayln (string-append "==== " path " ===="))
                    (define pda-risc-enhanced (decorate pda-risc-name))
+                   (remove-all-doomed-sequences! pda-risc-enhanced)
                    (define-values
                      (Paths Summaries Callers) (time
                                                 (CFA2 (min-headroom-analysis
