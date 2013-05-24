@@ -50,8 +50,8 @@
                ...)))))
 
 (get-cfa2-statistics "java"
-                     "ml"
-                     "c"
+                     ;; "ml" ;; slow
+                     ;; "c"  ;; slow
                      "paren-matching"
                      "line-calculator"
                      "arithmetic-exprs/full"
