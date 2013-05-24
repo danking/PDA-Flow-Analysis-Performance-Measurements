@@ -32,7 +32,7 @@
                    (define results (flow-results->term-results Paths
                                                                Summaries
                                                                Callers
-                                                               min-headroom-lattice))
+                                                               min-headroom-bounded-lattice))
                    (define log-file
                      (string-append "results/"
                                     (string-replace path "/" "-")
