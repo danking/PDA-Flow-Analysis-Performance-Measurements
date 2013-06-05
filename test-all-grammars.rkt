@@ -9,7 +9,13 @@
          "../pda-to-pda-risc/risc-enhanced/decorate.rkt"
          "../cfa2/cfa2.rkt"
          "../cfa2-results-analysis/flow-results-to-term-results.rkt"
-         "../cfa2-results-analysis/reject-dead-code.rkt")
+         "../cfa2-results-analysis/term-results.rkt"
+         "../cfa2-results-analysis/reject-dead-code.rkt"
+         ;; printing pda-risc-enh terms
+         (only-in "../pda-to-pda-risc/risc-enhanced/data.rkt"
+                  unparse-pda/showing-label)
+         ;; hack because pretty-printing of partitioned sets doesn't quite work
+         (only-in "../racket-utils/partitioned-sets.rkt" pset->set))
 
 (define-syntax (get-cfa2-statistics stx)
   (syntax-case stx ()
@@ -41,8 +47,7 @@
                                                                Callers
                                                                (cdr analysis)))
                    (define log-file
-                     (string-append "results/"
-                                    (string-replace path "/" "-")
+                     (string-append (string-replace path "/" "-")
                                     "-"
                                     (parameterize
                                         ([date-display-format 'iso-8601])
@@ -52,17 +57,67 @@
                                     ".log"))
                    (define summary (standard-overview results
                                                       pda-risc-enhanced
-                                                      log-file))
+                                                      (string-append "results/"
+                                                                     log-file)))
+                   (define pops-not-in-summaries
+                     (for/set ((pop-term (results-summary-pops summary))
+                               #:when (not
+                                       (for/or ((pp-summary (term-results-summaries
+                                                             results)))
+                                         (equal? pop-term (second pp-summary)))))
+                       pop-term))
+                   (with-output-to-file (string-append "results/missing-pops/"
+                                                       log-file)
+                     (lambda ()
+                       (pretty-print pops-not-in-summaries)))
+                   (with-output-to-file (string-append "results/pda-risc-enhanced/"
+                                                       log-file)
+                     (lambda ()
+                       (pretty-print (unparse-pda/showing-label pda-risc-enhanced))))
+                   (with-output-to-file (string-append "results/flow-results/"
+                                                       log-file)
+                     (lambda ()
+                       (pretty-print (term-results-uid->fv/hash results))))
+                   (with-output-to-file (string-append "results/abstract-paths/"
+                                                       log-file)
+                     (lambda ()
+                       (pretty-print (pset->set Paths))))
+                   (with-output-to-file (string-append "results/summaries/"
+                                                       log-file)
+                     (lambda ()
+                       (pretty-print (pset->set Summaries))))
+                   (with-output-to-file (string-append "results/callers/"
+                                                       log-file)
+                     (lambda ()
+                       (pretty-print (pset->set Callers))))
                    (void)))
                ...)))))
 
-(get-cfa2-statistics "java"
+(define (ensure-directory-exists dir)
+ (when (file-exists? dir)
+   (error 'verify-directory-exists
+          (string-append "The file, "
+                         dir
+                         " is blocking the creation of a necessary result"
+                         "-collecting directory")))
+ (unless (directory-exists? dir)
+   (make-directory dir)))
+
+(ensure-directory-exists "results")
+(ensure-directory-exists "results/missing-pops")
+(ensure-directory-exists "results/pda-risc-enhanced")
+(ensure-directory-exists "results/flow-results")
+(ensure-directory-exists "results/abstract-paths")
+(ensure-directory-exists "results/summaries")
+(ensure-directory-exists "results/callers")
+
+(get-cfa2-statistics "paren-matching"
+                     "arithmetic-exprs/polish-notation/plus-only"
+                     "arithmetic-exprs/plus-only"
+                     "arithmetic-exprs/polish-notation/plus-minus"
+                     "arithmetic-exprs/full"
+                     "line-calculator"
+                     ;; "java" ;; slow
                      ;; "ml" ;; slow
                      ;; "c"  ;; slow
-                     "paren-matching"
-                     "line-calculator"
-                     "arithmetic-exprs/full"
-                     "arithmetic-exprs/polish-notation/plus-only"
-                     "arithmetic-exprs/polish-notation/plus-minus"
-                     "arithmetic-exprs/plus-only"
                      )
