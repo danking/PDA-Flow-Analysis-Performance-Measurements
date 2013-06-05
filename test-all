@@ -1,5 +1,6 @@
 #!/bin/zsh
 
+if [ ! -d results ]; then mkdir results; fi
 DATE=$(date '+%F-%s')
 racket test-all-grammars.rkt >& results/master-$DATE.log
 COMMIT_HASH=$(git rev-parse --short --verify HEAD)

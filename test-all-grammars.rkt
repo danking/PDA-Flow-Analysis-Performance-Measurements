@@ -4,6 +4,8 @@
          (for-syntax racket/syntax)
          "../cfa2-results-analysis/standard-overview.rkt"
          "../cfa2-analyses/min-headroom.rkt"
+         "../cfa2-analyses/max-needed.rkt"
+         "../cfa2-analyses/max-headroom.rkt"
          "../pda-to-pda-risc/risc-enhanced/decorate.rkt"
          "../cfa2/cfa2.rkt"
          "../cfa2-results-analysis/flow-results-to-term-results.rkt"
@@ -22,17 +24,22 @@
       #`(begin (begin
                  (require (rename-in pda-file-path [pda-risc pda-risc-name]))
                  (let ()
+                   (define analysis
+                     (cons min-headroom-analysis min-headroom-bounded-lattice)
+                     #;(cons (max-headroom-analysis 10) (max-headroom-lattice 10))
+                     #;(cons (max-needed-analysis 10) (max-needed-lattice 10))
+                     )
                    (displayln (string-append "==== " path " ===="))
                    (define pda-risc-enhanced (decorate pda-risc-name))
                    (remove-all-doomed-sequences! pda-risc-enhanced)
                    (define-values
                      (Paths Summaries Callers) (time
-                                                (CFA2 (min-headroom-analysis
+                                                (CFA2 ((car analysis)
                                                        pda-risc-enhanced))))
                    (define results (flow-results->term-results Paths
                                                                Summaries
                                                                Callers
-                                                               min-headroom-bounded-lattice))
+                                                               (cdr analysis)))
                    (define log-file
                      (string-append "results/"
                                     (string-replace path "/" "-")
