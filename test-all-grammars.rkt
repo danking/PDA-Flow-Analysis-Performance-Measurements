@@ -4,8 +4,8 @@
          (for-syntax racket/syntax)
          "../cfa2-results-analysis/standard-overview.rkt"
          "../cfa2-analyses/min-headroom.rkt"
-         "../cfa2-analyses/max-needed.rkt"
-         "../cfa2-analyses/max-headroom.rkt"
+         ;; "../cfa2-analyses/max-needed.rkt"
+         ;; "../cfa2-analyses/max-headroom.rkt"
          "../pda-to-pda-risc/risc-enhanced/decorate.rkt"
          "../cfa2/cfa2.rkt"
          "../cfa2-results-analysis/flow-results-to-term-results.rkt"
@@ -39,9 +39,10 @@
                    (define pda-risc-enhanced (decorate pda-risc-name))
                    (remove-all-doomed-sequences! pda-risc-enhanced)
                    (define-values
-                     (Paths Summaries Callers) (time
-                                                (CFA2 ((car analysis)
-                                                       pda-risc-enhanced))))
+                     (Paths Configuration Summaries Callers)
+                     (time
+                      (PDA2 ((car analysis)
+                             pda-risc-enhanced))))
                    (define results (flow-results->term-results Paths
                                                                Summaries
                                                                Callers
@@ -82,14 +83,18 @@
                                                        log-file)
                      (lambda ()
                        (pretty-print (pset->set Paths))))
-                   (with-output-to-file (string-append "results/summaries/"
-                                                       log-file)
-                     (lambda ()
-                       (pretty-print (pset->set Summaries))))
-                   (with-output-to-file (string-append "results/callers/"
-                                                       log-file)
-                     (lambda ()
-                       (pretty-print (pset->set Callers))))
+                   ;; (with-output-to-file (string-append "results/summaries/"
+                   ;;                                     log-file)
+                   ;;   (lambda ()
+                   ;;     (pretty-print (pset->set Summaries))))
+                   ;; (with-output-to-file (string-append "results/callers/"
+                   ;;                                     log-file)
+                   ;;   (lambda ()
+                   ;;     (pretty-print (pset->set Callers))))
+                   ;; (with-output-to-file (string-append "results/configurations/"
+                   ;;                                     log-file)
+                   ;;   (lambda ()
+                   ;;     (pretty-print Configuration)))
                    (void)))
                ...)))))
 
@@ -110,6 +115,7 @@
 (ensure-directory-exists "results/abstract-paths")
 (ensure-directory-exists "results/summaries")
 (ensure-directory-exists "results/callers")
+(ensure-directory-exists "results/configurations")
 
 (get-cfa2-statistics "paren-matching"
                      "arithmetic-exprs/polish-notation/plus-only"
@@ -117,7 +123,7 @@
                      "arithmetic-exprs/polish-notation/plus-minus"
                      "arithmetic-exprs/full"
                      "line-calculator"
-                     ;; "java" ;; slow
-                     ;; "ml" ;; slow
-                     ;; "c"  ;; slow
+                     "java"
+                     "ml"
+                     "c"
                      )
