@@ -32,17 +32,19 @@
                  (let ()
                    (define analysis
                      (cons min-headroom-analysis min-headroom-bounded-lattice)
-                     #;(cons (max-headroom-analysis 10) (max-headroom-lattice 10))
-                     #;(cons (max-needed-analysis 10) (max-needed-lattice 10))
+                     ;(cons (max-headroom-analysis 10) (max-headroom-lattice 10))
+                     ;(cons (max-needed-analysis 10) (max-needed-lattice 10))
                      )
                    (displayln (string-append "==== " path " ===="))
                    (define pda-risc-enhanced (decorate pda-risc-name))
                    (remove-all-doomed-sequences! pda-risc-enhanced)
+                   (displayln "generate analysis (mostly toposort time)")
+                   (define instantiated-analysis (time ((car analysis) pda-risc-enhanced)))
+                   (displayln "PDA2 (main analysis)")
                    (define-values
                      (Paths Configuration Summaries Callers)
                      (time
-                      (PDA2 ((car analysis)
-                             pda-risc-enhanced))))
+                      (PDA2 instantiated-analysis)))
                    (define results (flow-results->term-results Paths
                                                                Summaries
                                                                Callers
