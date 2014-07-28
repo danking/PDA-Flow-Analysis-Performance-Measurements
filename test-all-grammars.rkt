@@ -10,7 +10,7 @@
          ;; "../cfa2/cfa2.rkt"
          ;; "../cfa2-results-analysis/flow-results-to-term-results.rkt"
          ;; "../cfa2-results-analysis/term-results.rkt"
-         "../cfa2-results-analysis/reject-dead-code.rkt"
+         "../pda-to-pda-risc/risc-enhanced/reject-dead-code.rkt"
          ;; printing pda-risc-enh terms
          (only-in "../pda-to-pda-risc/risc-enhanced/data.rkt"
                   unparse-pda/showing-label
@@ -22,7 +22,7 @@
          (only-in "../racket-utils/partitioned-sets.rkt" pset->set pset-count)
          "../pda2/pda2.rkt"
          "../pda2-analyses/forward.rkt"
-         "dot-graphify.rkt"
+         "../pda-to-pda-risc/risc-enhanced/dot-graph-utilities/dot-graphify.rkt"
          profile
          profile/render-text
          )
