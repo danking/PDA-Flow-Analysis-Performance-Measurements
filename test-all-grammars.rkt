@@ -23,6 +23,7 @@
          "../pda2/pda2.rkt"
          "../pda2-analyses/forward.rkt"
          "../pda-to-pda-risc/risc-enhanced/dot-graph-utilities/dot-graphify.rkt"
+         "../pda-to-pda-risc/risc-enhanced/basic-block-data.rkt"
          profile
          profile/render-text
          )
@@ -43,10 +44,13 @@
   (loop (seteq (pda-risc-enh-initial-term pre))
         (seteq (pda-risc-enh-initial-term pre))))
 
+(define-syntax-rule (for/set-union (iters ...) body ...)
+  (for/fold ([s (set)]) (iters ...) (set-union s (let () body ...))))
+
 (define (visited-uid-set Paths)
-  (for/set ([bp (in-set Paths)])
-    (match-define (list ctx sigma code) bp)
-    (pda-term->uid code)))
+  (for/set-union ([bp (in-set Paths)])
+    (match-define (list ctx sigma bb) bp)
+    (list->set (map pda-term->uid (block-nodes bb)))))
 
 (define-syntax (get-cfa2-statistics stx)
   (syntax-case stx ()
